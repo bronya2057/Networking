@@ -61,3 +61,64 @@ void printAdaptersInfo(PIP_ADAPTER_ADDRESSES adapter)
       adapter = adapter->Next;
    }
 }
+
+int fillAddressInfo(const char* hostname, const char* port, addrinfo* peer_address)
+{
+   int result = SUCCESS_CODE;
+
+   addrinfo hints;
+   memset(&hints, 0, sizeof(hints));
+   hints.ai_socktype = SOCK_STREAM;
+
+   if (getaddrinfo(hostname, port, &hints, &peer_address)) {
+      fprintf(stderr, "getaddrinfo() failed. (%d)\n", GETSOCKETERRNO());
+      result = ERROR_CODE;
+   }
+   else
+   {
+      printf("Remote address is: ");
+      char address_buffer[100];
+      char service_buffer[100];
+      getnameinfo(peer_address->ai_addr, peer_address->ai_addrlen,
+         address_buffer, sizeof(address_buffer),
+         service_buffer, sizeof(service_buffer),
+         NI_NUMERICHOST);
+      printf("%s %s\n", address_buffer, service_buffer);
+   }
+
+   return result;
+}
+
+int createSocket(addrinfo * peer_address, SOCKET& socket_peer)
+{
+   int result = ERROR_CODE;
+   
+   if (peer_address)
+   {
+      socket_peer = socket(peer_address->ai_family, peer_address->ai_socktype, peer_address->ai_protocol);
+
+      if (!ISVALIDSOCKET(socket_peer))
+      {
+         fprintf(stderr, "socket() failed. (%d)\n", GETSOCKETERRNO());
+      }
+      else
+      {
+         result = SUCCESS_CODE;
+      }
+   }
+
+   return result;
+}
+
+int connectRemoteSocket(addrinfo * peer_address, SOCKET & socket_peer)
+{
+   int result = SUCCESS_CODE;
+
+   if (connect(socket_peer, //connect() associates a socket with a remote address and initiates the TCP connection. bind() local!   
+      peer_address->ai_addr, peer_address->ai_addrlen)) {
+      fprintf(stderr, "connect() failed. (%d)\n", GETSOCKETERRNO());
+      result = ERROR_CODE;
+   }
+   
+   return result;
+}
