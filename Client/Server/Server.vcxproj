@@ -128,6 +128,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\WinsockHelper.hpp" />
+    <ClInclude Include="examples.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\WinsockHelper.cpp" />

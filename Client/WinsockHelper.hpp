@@ -54,8 +54,15 @@ void printAdaptersInfo(PIP_ADAPTER_ADDRESSES adapter);
 
 /*
 *  fill the passed peer_address with given hints (hostname, port)
+*  if you pass pointer, then the old pointer will not point anywhere and the copied pointer will do
 */
-int fillAddressInfo(const char* hostname, const char* port, addrinfo* peer_address);
+int fillAddressInfo(const char* hostname, const char* port, addrinfo*& peer_address);
+
+/*
+*  fill the passed peer_address with given hints (hostname, port)
+*  if you pass pointer, then the old pointer will not point anywhere and the copied pointer will do
+*/
+int fillLocalAddressInfo(const char* port, addrinfo*& peer_address);
 
 /*
 *  fill the passed socket with recently generated peer_address
@@ -66,3 +73,13 @@ int createSocket(addrinfo* peer_address, SOCKET& socket_peer);
 *  connect socket to the peer_address data remote 
 */
 int connectRemoteSocket(addrinfo* peer_address, SOCKET& socket_peer);
+
+/*
+*  connect socket to the local_address data locally
+*/
+int connectLocalSocket(addrinfo* bind_address, SOCKET& socket_listen);
+
+/*
+*  listen given socket with number of connections
+*/
+int listenSocket(SOCKET& socket_listen, int numberOfConnections);

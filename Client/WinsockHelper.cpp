@@ -62,7 +62,7 @@ void printAdaptersInfo(PIP_ADAPTER_ADDRESSES adapter)
    }
 }
 
-int fillAddressInfo(const char* hostname, const char* port, addrinfo* peer_address)
+int fillAddressInfo(const char* hostname, const char* port, addrinfo*& peer_address)
 {
    int result = SUCCESS_CODE;
 
@@ -84,6 +84,24 @@ int fillAddressInfo(const char* hostname, const char* port, addrinfo* peer_addre
          service_buffer, sizeof(service_buffer),
          NI_NUMERICHOST);
       printf("%s %s\n", address_buffer, service_buffer);
+   }
+
+   return result;
+}
+
+int fillLocalAddressInfo(const char * port, addrinfo *& peer_address)
+{
+   int result = SUCCESS_CODE;
+
+   addrinfo hints;
+   memset(&hints, 0, sizeof(hints));
+   hints.ai_family = AF_INET;
+   hints.ai_socktype = SOCK_STREAM;
+   hints.ai_flags = AI_PASSIVE;
+
+   if (getaddrinfo(0, port, &hints, &peer_address)) {
+      fprintf(stderr, "getaddrinfo() failed. (%d)\n", GETSOCKETERRNO());
+      result = ERROR_CODE;
    }
 
    return result;
@@ -121,4 +139,26 @@ int connectRemoteSocket(addrinfo * peer_address, SOCKET & socket_peer)
    }
    
    return result;
+}
+
+int connectLocalSocket(addrinfo * bind_address, SOCKET & socket_listen)
+{
+   printf("Binding socket to local address...\n");
+   if (bind(socket_listen,
+      bind_address->ai_addr, bind_address->ai_addrlen)) {
+      fprintf(stderr, "bind() failed. (%d)\n", GETSOCKETERRNO());
+      return 1;
+   }
+
+   return 0;
+}
+
+int listenSocket(SOCKET & socket_listen, int numberOfConnections)
+{
+   if (listen(socket_listen, numberOfConnections) < 0) {
+      fprintf(stderr, "listen() failed. (%d)\n", GETSOCKETERRNO());
+      return 1;
+   }
+
+   return 0;
 }

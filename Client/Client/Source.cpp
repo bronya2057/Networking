@@ -4,8 +4,8 @@
 
 #include <string>
 
-constexpr char* hostname = "example.com";
-constexpr char* port = "80";
+constexpr char* hostname = "127.0.0.1";//"example.com";
+constexpr char* port = "8080";
 
 int main(int argc, char *argv[]) {
 
@@ -30,7 +30,7 @@ int main(int argc, char *argv[]) {
    printf("Connecting...\n");
    if (connectRemoteSocket(peer_address, socket_peer) != SUCCESS_CODE) return ERROR_CODE;
 
-   freeaddrinfo(peer_address); //don't need the peer_address
+   freeaddrinfo(peer_address); //don't need the peer_address anymore
 
    while (1)
    {
