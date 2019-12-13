@@ -75,7 +75,17 @@ int main()
                      }
                      else
                      {
-                        send(j, read, bytes_received, 0); // send to each client except the one that send message
+                        //send(j, read, bytes_received, 0); // send to each client except the one that send message
+                        
+                        //blocking SEND. If not all data was sent in 1 piece
+                        //int begin = 0;
+                        //while (begin < buffer_len) {
+                        //   int sent = send(peer_socket, buffer + begin, buffer_len - begin, 0);
+                        //   if (sent == -1) {
+                        //      //Handle error
+                        //   }
+                        //   begin += sent;
+                        //}
                      }
                   }
                }

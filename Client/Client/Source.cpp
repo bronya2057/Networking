@@ -4,9 +4,6 @@
 
 #include <string>
 
-constexpr char* hostname = "127.0.0.1";//"example.com";
-constexpr char* port = "8080";
-
 int main(int argc, char *argv[]) {
 
    INIT_WINSOCK()
@@ -19,6 +16,15 @@ int main(int argc, char *argv[]) {
    {
       free(adapters);
       return -1;
+   }
+
+   char* hostname = "127.0.0.1";//"example.com";
+   char* port = "8080";
+
+   if (argc == 3)
+   {
+      hostname = argv[1];
+      port = argv[2];
    }
 
    addrinfo *peer_address;
