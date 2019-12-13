@@ -83,3 +83,23 @@ int connectLocalSocket(addrinfo* bind_address, SOCKET& socket_listen);
 *  listen given socket with number of connections
 */
 int listenSocket(SOCKET& socket_listen, int numberOfConnections);
+
+/*
+*  Accept client connection from given listening socket. Return client socket.
+*/
+SOCKET acceptClientSocket(SOCKET& socket_listen);
+
+class CFdSet
+{
+public:
+   CFdSet();
+   void addSocket(SOCKET& socket);
+   SOCKET getMaxSocket() const;
+   void zero();
+   fd_set getSet() const;
+   void clear(SOCKET& socketNumber);
+
+private:
+   fd_set mMaster;
+   SOCKET mMaxSocket;
+};

@@ -27,8 +27,13 @@ int main(int argc, char *argv[]) {
    SOCKET socket_peer;
    if (createSocket(peer_address, socket_peer) != SUCCESS_CODE) return ERROR_CODE;
 
+   while (connectRemoteSocket(peer_address, socket_peer) != SUCCESS_CODE)
+   {
+
+   }
+
    printf("Connecting...\n");
-   if (connectRemoteSocket(peer_address, socket_peer) != SUCCESS_CODE) return ERROR_CODE;
+   //if (connectRemoteSocket(peer_address, socket_peer) != SUCCESS_CODE) return ERROR_CODE;
 
    freeaddrinfo(peer_address); //don't need the peer_address anymore
 

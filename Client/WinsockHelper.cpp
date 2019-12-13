@@ -162,3 +162,66 @@ int listenSocket(SOCKET & socket_listen, int numberOfConnections)
 
    return 0;
 }
+
+SOCKET acceptClientSocket(SOCKET& socket_listen)
+{
+   SOCKET socket_client;
+
+   struct sockaddr_storage client_address;
+   socklen_t client_len = sizeof(client_address);
+   socket_client = accept(socket_listen,
+      (struct sockaddr*) &client_address,
+      &client_len);
+   if (!ISVALIDSOCKET(socket_client)) {
+      fprintf(stderr, "accept() failed. (%d)\n",
+         GETSOCKETERRNO());
+   }
+
+   char address_buffer[100];
+   getnameinfo((struct sockaddr*)&client_address,
+      client_len,
+      address_buffer, sizeof(address_buffer), 0, 0,
+      NI_NUMERICHOST);
+   printf("New connection from %s\n", address_buffer);
+
+   return socket_client;
+}
+
+CFdSet::CFdSet()
+   : mMaster()
+   , mMaxSocket()
+{
+   zero();
+}
+
+void CFdSet::addSocket(SOCKET& socket)
+{
+   FD_SET(socket, &mMaster);
+
+   if (mMaxSocket < socket)
+   {
+      mMaxSocket = socket;
+   }
+}
+
+SOCKET CFdSet::getMaxSocket() const
+{
+   return mMaxSocket;
+}
+
+void CFdSet::zero()
+{
+   FD_ZERO(&mMaster);
+   mMaxSocket = 0;
+}
+
+fd_set CFdSet::getSet() const
+{
+   return mMaster;
+}
+
+void CFdSet::clear(SOCKET& socketNumber)
+{
+   FD_CLR(socketNumber, &mMaster);
+   CLOSESOCKET(socketNumber);
+}
