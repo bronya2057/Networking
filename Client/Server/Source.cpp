@@ -64,6 +64,21 @@ int main()
                for (j = 0; j < bytes_received; ++j)
                   read[j] = toupper(read[j]);
                send(i, read, bytes_received, 0);
+
+               for (SOCKET j = 1; j < fdSet.getMaxSocket(); ++j)
+               {
+                  if (FD_ISSET(j, &fdSet.getSet()))
+                  {
+                     if (j == i && j == socket_listen)
+                     {
+                        continue;
+                     }
+                     else
+                     {
+                        send(j, read, bytes_received, 0); // send to each client except the one that send message
+                     }
+                  }
+               }
             }
 
          } //if FD_ISSET
